@@ -3,10 +3,11 @@ import { Program } from "@coral-xyz/anchor";
 import { UsermSol } from "../target/types/userm_sol";
 
 describe("userm-sol", () => {
-  // Configure the client to use the local cluster.
+  // provider shit
   let provider = anchor.AnchorProvider.local();
   anchor.setProvider(provider);
 
+  // for userlist account and signing
   let user_siger = anchor.web3.Keypair.generate();
 
   const program = anchor.workspace.UsermSol as Program<UsermSol>;
@@ -17,10 +18,8 @@ describe("userm-sol", () => {
       .initialize()
       .accounts({
         userlist: user_siger.publicKey,
-        deployer: provider.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([user_siger, provider.wallet.payer])
+      .signers([user_siger])
       .rpc();
     console.log("Your transaction signature", tx);
   });
@@ -31,9 +30,7 @@ describe("userm-sol", () => {
       .setUser("Chirag", "Jani")
       .accounts({
         userlist: user_siger.publicKey,
-        deployer: provider.publicKey,
       })
-      .signers([provider.wallet.payer])
       .rpc();
     console.log("Your transaction signature", tx);
   });
@@ -44,25 +41,13 @@ describe("userm-sol", () => {
       .setUser("Rashid", "Khan")
       .accounts({
         userlist: user_siger.publicKey,
-        deployer: provider.publicKey,
       })
-      .signers([provider.wallet.payer])
       .rpc();
     console.log("Your transaction signature", tx);
   });
 
   it("Gets All Users!", async () => {
-    // Add your test here.
-    const tx = await program.methods
-      .getAllUsers()
-      .accounts({
-        userlist: user_siger.publicKey,
-        deployer: provider.publicKey,
-      })
-      .signers([provider.wallet.payer])
-      .rpc();
-    console.log("Your transaction signature", tx);
-
+    // not good as directly reading variable
     let data = await program.account.users.fetch(user_siger.publicKey);
     console.log("Userdata: ", data);
   });
@@ -72,9 +57,7 @@ describe("userm-sol", () => {
       .getOneUser("Chirag", "Jani")
       .accounts({
         userlist: user_siger.publicKey,
-        deployer: provider.publicKey,
       })
-      .signers([provider.wallet.payer])
       .simulate()
       .then((d) => {
         console.log("Return data", d);
