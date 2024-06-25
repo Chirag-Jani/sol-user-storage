@@ -38,7 +38,7 @@ describe("userm-sol", () => {
   it("Stores Another User value!", async () => {
     // Add your test here.
     const tx = await program.methods
-      .setUser("Rashid", "Khan")
+      .setUser("John", "Doe")
       .accounts({
         userlist: user_siger.publicKey,
       })
